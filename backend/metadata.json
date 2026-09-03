@@ -1,0 +1,25 @@
+{
+    "model_type": "Multiple Linear Regression",
+    "features": [
+        "Area_Sqft",
+        "Floor",
+        "Car_Parking_Sqft",
+        "Bedrooms",
+        "Facing",
+        "City_Tier",
+        "Property_Type",
+        "New_Construction",
+        "Age",
+        "Furnishing",
+        "Bathrooms",
+        "Balconies",
+        "Has_Pool",
+        "Has_Gym",
+        "Has_Security",
+        "Has_Backup",
+        "City_Preset"
+    ],
+    "target": "Price_Lakh",
+    "version": "1.0",
+    "r2_score": 0.9995567403601238
+}

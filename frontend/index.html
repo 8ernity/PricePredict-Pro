@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>PricePredict Pro - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+      .btn-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        margin-bottom: 2rem;
+      }
+
+      .btn-cool {
+        --border-radius: 9999px;
+        --padding: 4px;
+        --transition: 0.4s;
+        --button-color: #1a1f27;
+        --highlight-color-hue: 350deg;
+
+        width: 100%;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        font-family: "Hanken Grotesk", sans-serif;
+        font-size: 1.125rem;
+        font-weight: 700;
+        background-color: var(--button-color);
+
+        box-shadow:
+          inset 0px 1px 1px rgba(255, 255, 255, 0.2),
+          inset 0px 2px 2px rgba(255, 255, 255, 0.15),
+          inset 0px 4px 4px rgba(255, 255, 255, 0.1),
+          inset 0px 8px 8px rgba(255, 255, 255, 0.05),
+          inset 0px 16px 16px rgba(255, 255, 255, 0.05),
+          0px -1px 1px rgba(0, 0, 0, 0.02),
+          0px -2px 2px rgba(0, 0, 0, 0.03),
+          0px -4px 4px rgba(0, 0, 0, 0.05),
+          0px -8px 8px rgba(0, 0, 0, 0.06),
+          0px -16px 16px rgba(0, 0, 0, 0.08);
+
+        border: solid 1px #fff2;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+
+        transition: box-shadow var(--transition), border var(--transition), background-color var(--transition);
+      }
+      
+      .btn-cool::before {
+        content: ""; position: absolute; top: calc(0px - var(--padding)); left: calc(0px - var(--padding)); width: calc(100% + var(--padding) * 2); height: calc(100% + var(--padding) * 2); border-radius: calc(var(--border-radius) + var(--padding)); pointer-events: none; background-image: linear-gradient(0deg, #0004, #000a); z-index: -1;
+        transition: box-shadow var(--transition), filter var(--transition);
+        box-shadow: 0 -8px 8px -6px #0000 inset, 0 -16px 16px -8px #00000000 inset, 1px 1px 1px #fff2, 2px 2px 2px #fff1, -1px -1px 1px #0002, -2px -2px 2px #0001;
+      }
+      .btn-cool::after {
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit; pointer-events: none;
+        background-image: linear-gradient(0deg, #fff, hsl(var(--highlight-color-hue), 100%, 70%), hsla(var(--highlight-color-hue), 100%, 70%, 50%), 8%, transparent);
+        background-position: 0 0; opacity: 0; transition: opacity var(--transition), filter var(--transition);
+      }
+      .btn-letter { position: relative; display: inline-block; color: #fff5; animation: letter-anim 2s ease-in-out infinite; transition: color var(--transition), text-shadow var(--transition), opacity var(--transition); }
+      @keyframes letter-anim { 50% { text-shadow: 0 0 3px #fff8; color: #fff; } }
+      .btn-svg { height: 24px; margin-right: 0.5rem; fill: #e8e8e8; animation: flicker 2s linear infinite; animation-delay: 0.5s; filter: drop-shadow(0 0 2px #fff9); transition: fill var(--transition), filter var(--transition), opacity var(--transition); }
+      @keyframes flicker { 50% { opacity: 0.3; } }
+      .txt-wrapper { position: relative; display: grid; align-items: center; justify-items: center; }
+      .txt-1, .txt-2 { grid-area: 1 / 1; display: flex;}
+      .txt-1 { animation: appear-anim 1s ease-in-out forwards; }
+      .txt-2 { opacity: 0; }
+      @keyframes appear-anim { 0% { opacity: 0; } 100% { opacity: 1; } }
+      
+      .btn-cool:hover .txt-1, .btn-cool:active .txt-1 { animation: opacity-anim 0.3s ease-in-out forwards; animation-delay: 0.2s; }
+      .btn-cool:hover .txt-2, .btn-cool:active .txt-2 { animation: opacity-anim 0.3s ease-in-out reverse forwards; animation-delay: 0.2s; }
+      @keyframes opacity-anim { 0% { opacity: 1; } 100% { opacity: 0; } }
+      
+      .btn-cool:hover .btn-letter, .btn-cool:active .btn-letter { animation: focused-letter-anim 1s ease-in-out forwards, letter-anim 1.2s ease-in-out infinite; animation-delay: 0s, 1s; }
+      @keyframes focused-letter-anim { 0%, 100% { } 50% { filter: brightness(150%) drop-shadow(-36px 12px 12px hsl(var(--highlight-color-hue), 100%, 70%)); } }
+      
+      .btn-cool:hover .btn-svg, .btn-cool:active .btn-svg { animation-duration: 1.2s; animation-delay: 0.2s; }
+      .btn-cool:hover::before, .btn-cool:active::before { box-shadow: 0 -8px 12px -6px #fff3 inset, 0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 20%) inset, 1px 1px 1px #fff3, 2px 2px 2px #fff1, -1px -1px 1px #0002, -2px -2px 2px #0001; }
+      .btn-cool:hover::after, .btn-cool:active::after { opacity: 0.6; mask-image: linear-gradient(0deg, #fff, transparent); filter: brightness(100%); }
+      
+      .btn-letter:nth-child(1), .btn-cool:hover .btn-letter:nth-child(1) { animation-delay: 0s; }
+      .btn-letter:nth-child(2), .btn-cool:hover .btn-letter:nth-child(2) { animation-delay: 0.08s; }
+      .btn-letter:nth-child(3), .btn-cool:hover .btn-letter:nth-child(3) { animation-delay: 0.16s; }
+      .btn-letter:nth-child(4), .btn-cool:hover .btn-letter:nth-child(4) { animation-delay: 0.24s; }
+      .btn-letter:nth-child(5), .btn-cool:hover .btn-letter:nth-child(5) { animation-delay: 0.32s; }
+      .btn-letter:nth-child(6), .btn-cool:hover .btn-letter:nth-child(6) { animation-delay: 0.4s; }
+      .btn-letter:nth-child(7), .btn-cool:hover .btn-letter:nth-child(7) { animation-delay: 0.48s; }
+      .btn-letter:nth-child(8), .btn-cool:hover .btn-letter:nth-child(8) { animation-delay: 0.56s; }
+      .btn-letter:nth-child(9), .btn-cool:hover .btn-letter:nth-child(9) { animation-delay: 0.64s; }
+      .btn-letter:nth-child(10), .btn-cool:hover .btn-letter:nth-child(10) { animation-delay: 0.72s; }
+      .btn-letter:nth-child(11), .btn-cool:hover .btn-letter:nth-child(11) { animation-delay: 0.8s; }
+      .btn-letter:nth-child(12), .btn-cool:hover .btn-letter:nth-child(12) { animation-delay: 0.88s; }
+      .btn-letter:nth-child(13), .btn-cool:hover .btn-letter:nth-child(13) { animation-delay: 0.96s; }
+      .btn-letter:nth-child(14), .btn-cool:hover .btn-letter:nth-child(14) { animation-delay: 1.04s; }
+      .btn-letter:nth-child(15), .btn-cool:hover .btn-letter:nth-child(15) { animation-delay: 1.12s; }
+      .btn-letter:nth-child(16), .btn-cool:hover .btn-letter:nth-child(16) { animation-delay: 1.20s; }
+      .btn-letter:nth-child(17), .btn-cool:hover .btn-letter:nth-child(17) { animation-delay: 1.28s; }
+      .btn-letter:nth-child(18), .btn-cool:hover .btn-letter:nth-child(18) { animation-delay: 1.36s; }
+      .btn-letter:nth-child(19), .btn-cool:hover .btn-letter:nth-child(19) { animation-delay: 1.44s; }
+      .btn-letter:nth-child(20), .btn-cool:hover .btn-letter:nth-child(20) { animation-delay: 1.52s; }
+      .btn-letter:nth-child(21), .btn-cool:hover .btn-letter:nth-child(21) { animation-delay: 1.60s; }
+      .btn-letter:nth-child(22), .btn-cool:hover .btn-letter:nth-child(22) { animation-delay: 1.68s; }
+      .btn-letter:nth-child(23), .btn-cool:hover .btn-letter:nth-child(23) { animation-delay: 1.76s; }
+      
+      .btn-cool:active { border: solid 1px hsla(var(--highlight-color-hue), 100%, 80%, 70%); background-color: hsla(var(--highlight-color-hue), 50%, 20%, 0.5); }
+      .btn-cool:active::before { box-shadow: 0 -8px 12px -6px #fffa inset, 0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 80%) inset, 1px 1px 1px #fff4, 2px 2px 2px #fff2, -1px -1px 1px #0002, -2px -2px 2px #0001; }
+      .btn-cool:active::after { opacity: 1; mask-image: linear-gradient(0deg, #fff, transparent); filter: brightness(200%); }
+      .btn-cool:active .btn-letter { text-shadow: 0 0 1px hsla(var(--highlight-color-hue), 100%, 90%, 90%); animation: none; }
+      .btn-cool:hover { border: solid 1px hsla(var(--highlight-color-hue), 100%, 80%, 40%); }
+      .btn-cool:hover::before { box-shadow: 0 -8px 8px -6px #fffa inset, 0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 30%) inset, 1px 1px 1px #fff2, 2px 2px 2px #fff1, -1px -1px 1px #0002, -2px -2px 2px #0001; }
+      .btn-cool:hover::after { opacity: 1; mask-image: linear-gradient(0deg, #fff, transparent); }
+      .btn-cool:hover .btn-svg { fill: #fff; filter: drop-shadow(0 0 3px hsl(var(--highlight-color-hue), 100%, 70%)) drop-shadow(0 -4px 6px #0009); animation: none; }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "rgba(255, 75, 75, 0.2)",
+                        "on-secondary": "#ffffff",
+                        "surface": "#161b22",
+                        "surface-bright": "#21262d",
+                        "on-primary-container": "#ffbaba",
+                        "on-background": "#ffffff",
+                        "outline": "#8b949e",
+                        "secondary-container": "#30363d",
+                        "on-primary": "#ffffff",
+                        "background": "#0d1117",
+                        "error": "#ff4b4b",
+                        "inverse-surface": "#ffffff",
+                        "surface-container-lowest": "#010409",
+                        "on-surface": "#ffffff",
+                        "surface-container-highest": "#30363d",
+                        "primary": "#ff4b4b",
+                        "surface-container-low": "#161b22",
+                        "outline-variant": "#30363d",
+                        "surface-container-high": "#21262d",
+                        "surface-container": "#1a1f27",
+                        "on-surface-variant": "#8b949e",
+                        "primary-fixed": "#ff7676"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-background text-on-surface min-h-screen font-body-md overflow-x-hidden selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-md text-primary font-headline-md text-headline-md fixed top-0 right-0 w-full z-30 px-6 h-16 flex items-center justify-between border-b border-outline-variant/30 shadow-sm">
+    <div class="flex items-center gap-4">
+        <span class="font-extrabold text-on-surface">Valuation Dashboard</span>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="relative hidden lg:block">
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+            <input class="bg-surface-container-high border-none rounded-full py-1.5 pl-4 pr-10 text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none w-64 placeholder:text-on-surface-variant" placeholder="Search..." type="text"/>
+        </div>
+        <button aria-label="account_circle" class="w-10 h-10 rounded-full flex items-center justify-center">
+            <img class="w-8 h-8 rounded-full object-cover border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpghOq6Xwe98wGsLyOphOkfWwnQRi1JnJLWaPeLDEn7N3o33ZVeJf9TkJF3YtRBwL_EOPQfUZzVjtPJSLKdXToxw--RLPhh5zjXfdF43MxD5B0LWuUuOvIzwxhYyIhCZjv8hhLBSozIQ-TcLuxFDLTG4U4KPjj3NKV807XrZIwi-nBE7LPtBC-IcprnZrHxSCc4D0_0Rh9Zug0rPwItRy6OYuJQRWwWJSm2_PwwwrxibCYMUIt3XkHlQ"/>
+        </button>
+    </div>
+</header>
+<!-- Main Layout -->
+<main class="pt-16 min-h-screen flex flex-col md:flex-row relative">
+    <!-- Left Sidebar (Property Attributes Form) -->
+    <aside id="sidebar" class="w-full flex-shrink-0 border-r border-outline-variant/30 bg-surface-container h-[calc(100vh-4rem)] overflow-y-auto sticky top-16 custom-scrollbar p-6 flex flex-col gap-6" style="width: 384px; min-width: 300px; max-width: 600px;">
+        <h2 class="text-xl text-on-surface border-b border-outline-variant/30 pb-4 mb-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-on-surface-variant">settings</span> 
+            Property Attributes (India)
+        </h2>
+        
+        <!-- City Preset Selection -->
+        <div class="flex flex-col gap-2 border-b border-outline-variant/30 pb-6 mb-2">
+            <label class="text-sm text-on-surface font-bold">Choose an Indian City Preset:</label>
+            <div class="relative">
+                <select id="preset-select" class="w-full bg-surface-container-highest text-on-surface border border-error/50 rounded-lg p-2.5 pr-8 focus:outline-none focus:ring-1 focus:ring-primary text-sm appearance-none cursor-pointer" onchange="handlePresetChange()">
+                    <option value="Custom Input">Custom Input</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Delhi NCR">Delhi NCR</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Chennai">Chennai</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+                    <span class="material-symbols-outlined">expand_more</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between items-end">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Area (Sqft)</label>
+                <span id="area-display" class="text-primary font-bold">1250</span>
+            </div>
+            <input id="area-slider" oninput="document.getElementById('area-display').innerText = this.value" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="5000" min="300" type="range" value="1250"/>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider truncate">BHK Bedrooms</label>
+                <div class="flex items-center bg-surface-container-highest rounded-lg border border-outline-variant/50 p-1">
+                    <button onclick="updateStepper('bedrooms', -1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">-</button>
+                    <span id="bedrooms-display" class="flex-1 text-center font-bold text-on-surface">2</span>
+                    <button onclick="updateStepper('bedrooms', 1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">+</button>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Floor Number</label>
+                <div class="flex items-center bg-surface-container-highest rounded-lg border border-outline-variant/50 p-1">
+                    <button onclick="updateStepper('floor', -1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">-</button>
+                    <span id="floor-display" class="flex-1 text-center font-bold text-on-surface">8</span>
+                    <button onclick="updateStepper('floor', 1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">+</button>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2 col-span-2">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Parking (Sqft)</label>
+                <div class="flex items-center bg-surface-container-highest rounded-lg border border-outline-variant/50 p-1">
+                    <button onclick="updateStepper('parking', -10)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">-</button>
+                    <span id="parking-display" class="flex-1 text-center font-bold text-on-surface">150</span>
+                    <button onclick="updateStepper('parking', 10)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Facing</label>
+            <div class="grid grid-cols-4 gap-2">
+                <button id="facing-East" onclick="setFacing('East')" class="facing-btn bg-primary-container text-on-primary-container border-primary py-2 rounded-lg text-sm font-bold border transition-all">East</button>
+                <button id="facing-West" onclick="setFacing('West')" class="facing-btn bg-surface-container-highest text-on-surface-variant border-transparent hover:border-outline-variant py-2 rounded-lg text-sm border transition-all">West</button>
+                <button id="facing-North" onclick="setFacing('North')" class="facing-btn bg-surface-container-highest text-on-surface-variant border-transparent hover:border-outline-variant py-2 rounded-lg text-sm border transition-all">North</button>
+                <button id="facing-South" onclick="setFacing('South')" class="facing-btn bg-surface-container-highest text-on-surface-variant border-transparent hover:border-outline-variant py-2 rounded-lg text-sm border transition-all">South</button>
+            </div>
+        </div>
+
+        <!-- Toggle for Additional Requirements -->
+        <div class="border-t border-outline-variant/30 pt-4 mt-2">
+            <label class="flex items-center cursor-pointer justify-between">
+                <span class="text-[12px] text-on-surface-variant uppercase tracking-wider font-bold">Additional requirements</span>
+                <div class="relative">
+                    <input type="checkbox" id="additional-toggle" class="sr-only peer" onchange="toggleAdditionalRequirements()">
+                    <div class="block bg-surface-container-highest w-10 h-6 rounded-full border border-outline-variant/50 transition-colors peer-checked:border-primary peer-checked:bg-primary/10"></div>
+                    <div class="absolute left-1 top-1 bg-on-surface-variant w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4 peer-checked:bg-primary"></div>
+                </div>
+            </label>
+        </div>
+
+        <!-- Hidden Additional Requirements Panel -->
+        <div id="additional-requirements" class="hidden flex-col gap-6 transition-all pb-4">
+            
+            <!-- City Tier -->
+            <div class="flex flex-col gap-2">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">City Tier</label>
+                <select id="city-tier-select" class="bg-surface-container-highest text-on-surface border border-outline-variant/50 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-primary text-sm appearance-none cursor-pointer">
+                    <option value="Metro">Metro City</option>
+                    <option value="Tier-2">Tier-2 City</option>
+                    <option value="Tier-3">Tier-3 City</option>
+                </select>
+            </div>
+
+            <!-- Property Type -->
+            <div class="flex flex-col gap-2">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Property Type</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="type-Apartment" onclick="setPropertyType('Apartment')" class="type-btn bg-primary-container text-on-primary-container border-primary py-2 rounded-lg text-sm font-bold border transition-all">Apartment</button>
+                    <button id="type-Villa" onclick="setPropertyType('Villa')" class="type-btn bg-surface-container-highest text-on-surface-variant border-transparent hover:border-outline-variant py-2 rounded-lg text-sm border transition-all">Villa</button>
+                    <button id="type-Independent" onclick="setPropertyType('Independent')" class="type-btn bg-surface-container-highest text-on-surface-variant border-transparent hover:border-outline-variant py-2 rounded-lg text-sm border transition-all">Independent</button>
+                </div>
+            </div>
+
+            <!-- New Construction vs Resale -->
+            <div class="flex justify-between items-center bg-surface-container-highest p-3 rounded-lg border border-outline-variant/50">
+                <span class="text-sm text-on-surface">New Construction</span>
+                <label class="relative cursor-pointer">
+                    <input type="checkbox" id="construction-toggle" class="sr-only peer" checked>
+                    <div class="block bg-surface-container w-10 h-6 rounded-full border border-outline-variant/50 transition-colors peer-checked:border-primary peer-checked:bg-primary/10"></div>
+                    <div class="absolute left-1 top-1 bg-on-surface-variant w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4 peer-checked:bg-primary"></div>
+                </label>
+            </div>
+
+            <!-- Property Age -->
+            <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-end">
+                    <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Property Age (Years)</label>
+                    <span id="age-display" class="text-primary font-bold">5</span>
+                </div>
+                <input id="age-slider" oninput="document.getElementById('age-display').innerText = this.value" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="50" min="0" type="range" value="5"/>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Furnishing -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Furnishing</label>
+                    <select id="furnishing-select" class="bg-surface-container-highest text-on-surface border border-outline-variant/50 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-primary text-sm appearance-none cursor-pointer">
+                        <option value="Unfurnished">Unfurnished</option>
+                        <option value="Semi-Furnished">Semi-Furnished</option>
+                        <option value="Fully-Furnished">Fully-Furnished</option>
+                    </select>
+                </div>
+                
+                <!-- Bathrooms -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[12px] text-on-surface-variant uppercase tracking-wider truncate">Bathrooms</label>
+                    <div class="flex items-center bg-surface-container-highest rounded-lg border border-outline-variant/50 p-1">
+                        <button onclick="updateStepper('bathrooms', -1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">-</button>
+                        <span id="bathrooms-display" class="flex-1 text-center font-bold text-on-surface">2</span>
+                        <button onclick="updateStepper('bathrooms', 1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">+</button>
+                    </div>
+                </div>
+
+                <!-- Balconies -->
+                <div class="flex flex-col gap-2 col-span-2 sm:col-span-1">
+                    <label class="text-[12px] text-on-surface-variant uppercase tracking-wider truncate">Balconies</label>
+                    <div class="flex items-center bg-surface-container-highest rounded-lg border border-outline-variant/50 p-1">
+                        <button onclick="updateStepper('balconies', -1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">-</button>
+                        <span id="balconies-display" class="flex-1 text-center font-bold text-on-surface">1</span>
+                        <button onclick="updateStepper('balconies', 1)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Amenities -->
+            <div class="flex flex-col gap-2">
+                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Premium Amenities</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center gap-2 bg-surface-container-highest p-2 rounded-lg border border-outline-variant/30 cursor-pointer">
+                        <input type="checkbox" id="pool-toggle" class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2">
+                        <span class="text-sm text-on-surface">Swimming Pool</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-surface-container-highest p-2 rounded-lg border border-outline-variant/30 cursor-pointer">
+                        <input type="checkbox" id="gym-toggle" class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2">
+                        <span class="text-sm text-on-surface">Gymnasium</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-surface-container-highest p-2 rounded-lg border border-outline-variant/30 cursor-pointer">
+                        <input type="checkbox" id="security-toggle" class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2" checked>
+                        <span class="text-sm text-on-surface">24/7 Security</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-surface-container-highest p-2 rounded-lg border border-outline-variant/30 cursor-pointer">
+                        <input type="checkbox" id="backup-toggle" class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2" checked>
+                        <span class="text-sm text-on-surface">Power Backup</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Resizer Handle -->
+    <div id="resizer" class="w-1.5 cursor-col-resize bg-outline-variant/20 hover:bg-primary/50 active:bg-primary transition-colors z-20 flex-shrink-0 h-[calc(100vh-4rem)] sticky top-16 hidden md:block"></div>
+
+    <!-- Right Content Area -->
+    <div class="flex-1 h-[calc(100vh-4rem)] overflow-y-auto bg-background p-6 lg:p-8 custom-scrollbar min-w-0">
+        <div class="max-w-6xl mx-auto space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-outline-variant/20 pb-6">
+                <div>
+                    <h2 class="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">AI-powered residential property valuation</h2>
+                    <p class="text-on-surface-variant text-lg">Precision real estate insights driven by Linear Regression.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Valuation Card -->
+                <div class="lg:col-span-2 bg-[#1E1E1E] rounded-xl border border-white/5 relative overflow-hidden flex flex-col group">
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+                    <div class="p-8 flex flex-col flex-1 z-10">
+                        <div class="btn-wrapper">
+                            <button onclick="calculatePrice()" class="btn-cool">
+                                <svg class="btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"></path>
+                                </svg>
+                                <div class="txt-wrapper">
+                                    <div class="txt-1">
+                                        <span class="btn-letter">C</span><span class="btn-letter">a</span><span class="btn-letter">l</span><span class="btn-letter">c</span><span class="btn-letter">u</span><span class="btn-letter">l</span><span class="btn-letter">a</span><span class="btn-letter">t</span><span class="btn-letter">e</span><span class="btn-letter">&nbsp;</span><span class="btn-letter">H</span><span class="btn-letter">o</span><span class="btn-letter">u</span><span class="btn-letter">s</span><span class="btn-letter">e</span><span class="btn-letter">&nbsp;</span><span class="btn-letter">P</span><span class="btn-letter">r</span><span class="btn-letter">i</span><span class="btn-letter">c</span><span class="btn-letter">e</span>
+                                    </div>
+                                    <div class="txt-2">
+                                        <span class="btn-letter">C</span><span class="btn-letter">a</span><span class="btn-letter">l</span><span class="btn-letter">c</span><span class="btn-letter">u</span><span class="btn-letter">l</span><span class="btn-letter">a</span><span class="btn-letter">t</span><span class="btn-letter">i</span><span class="btn-letter">n</span><span class="btn-letter">g</span><span class="btn-letter">&nbsp;</span><span class="btn-letter">H</span><span class="btn-letter">o</span><span class="btn-letter">u</span><span class="btn-letter">s</span><span class="btn-letter">e</span><span class="btn-letter">&nbsp;</span><span class="btn-letter">P</span><span class="btn-letter">r</span><span class="btn-letter">i</span><span class="btn-letter">c</span><span class="btn-letter">e</span>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="text-center flex-1 flex flex-col justify-center">
+                            <p class="text-on-surface-variant text-[12px] uppercase tracking-widest mb-2">Estimated Market Price</p>
+                            <h3 id="price-output" class="text-[64px] leading-none font-bold text-on-surface tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400">
+                                <span class="text-primary font-normal text-5xl align-top mr-2">₹</span>-- Lakhs
+                            </h3>
+                            <div class="inline-flex items-center justify-center gap-2 bg-surface-container-highest/50 px-4 py-1.5 rounded-full mx-auto border border-white/5">
+                                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                <span class="text-sm text-on-surface-variant">Live Inference • Multiple Linear Regression Engine</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Dynamics -->
+                <div class="flex flex-col gap-6">
+                    <div class="bg-[#1E1E1E] rounded-xl border border-white/5 p-6 relative overflow-hidden h-full flex flex-col">
+                        <h3 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">insights</span> Market Dynamics
+                        </h3>
+                        <div class="space-y-6 flex-1">
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-on-surface-variant text-sm">Model R² Score</span>
+                                    <span class="text-primary font-bold">0.89</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary-fixed w-[89%] rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Context Map -->
+            <div class="bg-[#1E1E1E] rounded-xl border border-white/5 overflow-hidden flex flex-col h-[600px]">
+                <div class="p-4 border-b border-white/5 flex justify-between items-center bg-surface-container-low/50">
+                    <h3 class="text-lg text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">map</span>
+                        Location Context
+                    </h3>
+                </div>
+                <div class="flex-1 relative">
+                    <div id="map" class="absolute inset-0 z-0 bg-[#000]"></div>
+                    <!-- Map Layer Toggles -->
+                    <div class="absolute top-4 right-4 z-10 flex bg-surface-container/90 backdrop-blur border border-outline-variant/50 rounded-lg p-1 shadow-lg">
+                        <button id="btn-dark-map" onclick="setMapLayer('dark')" class="px-4 py-1.5 text-sm font-medium rounded-md bg-primary-container text-on-primary-container transition-all">Dark Map</button>
+                        <button id="btn-satellite-map" onclick="setMapLayer('satellite')" class="px-4 py-1.5 text-sm font-medium rounded-md text-on-surface-variant hover:text-on-surface transition-all">Satellite</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="js/script.js"></script>
+</body>
+</html>

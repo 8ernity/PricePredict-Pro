@@ -1,0 +1,5 @@
+body { font-family: 'Hanken Grotesk', sans-serif; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #434937; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #b5ea4d; }
