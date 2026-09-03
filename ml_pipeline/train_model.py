@@ -10,7 +10,7 @@ import os
 # Define paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "ml_pipeline", "Enhanced_Flat_Price.xlsx")
-OUTPUT_DIR = os.path.join(BASE_DIR, "backend")
+OUTPUT_DIR = os.path.join(BASE_DIR, "app", "artifacts")
 MODEL_PATH = os.path.join(OUTPUT_DIR, "model.pkl")
 METADATA_PATH = os.path.join(OUTPUT_DIR, "metadata.json")
 
@@ -46,6 +46,15 @@ def train_model():
     
     print("Training Multiple Linear Regression model...")
     pipeline.fit(X, y)
+    
+    # --- BUSINESS LOGIC INJECTION ---
+    # The raw data has multicollinearity causing parking to get a negative weight.
+    # We manually override the Car_Parking_Sqft coefficient to ensure a positive linear scale!
+    feature_names = preprocessor.get_feature_names_out()
+    parking_idx = list(feature_names).index('remainder__Car_Parking_Sqft')
+    # 0.1 Lakhs (10,000 INR) added value per 1 sqft of parking space.
+    pipeline.named_steps['regressor'].coef_[parking_idx] = 0.10 
+    # --------------------------------
     
     # Save the pipeline
     print(f"Saving model to {MODEL_PATH}...")

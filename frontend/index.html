@@ -20,7 +20,7 @@
         --padding: 4px;
         --transition: 0.4s;
         --button-color: #1a1f27;
-        --highlight-color-hue: 350deg;
+        --highlight-color-hue: 210deg;
 
         width: 100%;
         user-select: none;
@@ -115,6 +115,69 @@
       .btn-cool:hover::before { box-shadow: 0 -8px 8px -6px #fffa inset, 0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 30%) inset, 1px 1px 1px #fff2, 2px 2px 2px #fff1, -1px -1px 1px #0002, -2px -2px 2px #0001; }
       .btn-cool:hover::after { opacity: 1; mask-image: linear-gradient(0deg, #fff, transparent); }
       .btn-cool:hover .btn-svg { fill: #fff; filter: drop-shadow(0 0 3px hsl(var(--highlight-color-hue), 100%, 70%)) drop-shadow(0 -4px 6px #0009); animation: none; }
+
+      /* Flip Card CSS */
+      .flip-card {
+        background-color: transparent;
+        perspective: 1000px;
+      }
+      .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+      }
+      .flip-card:hover .flip-card-inner {
+        transform: rotateY(180deg);
+      }
+      .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+      }
+      .flip-card-back {
+        transform: rotateY(180deg);
+      }
+
+      /* GitHub Button CSS */
+      .github-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 16px;
+        gap: 12px;
+        background-color: #181717;
+        outline: 2px #30363d solid;
+        outline-offset: -2px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: 400ms;
+        text-decoration: none;
+      }
+      .github-btn .text {
+        color: white;
+        font-weight: 700;
+        font-size: 0.95em;
+        transition: 400ms;
+        margin: 0;
+      }
+      .github-btn svg path {
+        transition: 400ms;
+      }
+      .github-btn:hover {
+        background-color: #30363d;
+        outline-color: #8b949e;
+      }
+      .github-btn:hover .text {
+        color: #fff;
+      }
+      .github-btn:hover svg path {
+        fill: #fff;
+      }
     </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
@@ -162,18 +225,17 @@
 </head>
 <body class="bg-background text-on-surface min-h-screen font-body-md overflow-x-hidden selection:bg-primary selection:text-on-primary">
 <!-- TopAppBar -->
-<header class="bg-surface/80 backdrop-blur-md text-primary font-headline-md text-headline-md fixed top-0 right-0 w-full z-30 px-6 h-16 flex items-center justify-between border-b border-outline-variant/30 shadow-sm">
+<header class="bg-black text-primary font-headline-md text-headline-md fixed top-0 right-0 w-full z-30 px-6 h-16 flex items-center justify-between border-b border-outline-variant/30 shadow-sm">
     <div class="flex items-center gap-4">
-        <span class="font-extrabold text-on-surface">PricePredict Pro</span>
+        <img src="logo.png" alt="PricePredict Pro Logo" class="h-10 w-auto object-contain">
     </div>
     <div class="flex items-center gap-4">
-        <div class="relative hidden lg:block">
-            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input class="bg-surface-container-high border-none rounded-full py-1.5 pl-4 pr-10 text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:outline-none w-64 placeholder:text-on-surface-variant" placeholder="Search..." type="text"/>
-        </div>
-        <button aria-label="account_circle" class="w-10 h-10 rounded-full flex items-center justify-center">
-            <img class="w-8 h-8 rounded-full object-cover border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpghOq6Xwe98wGsLyOphOkfWwnQRi1JnJLWaPeLDEn7N3o33ZVeJf9TkJF3YtRBwL_EOPQfUZzVjtPJSLKdXToxw--RLPhh5zjXfdF43MxD5B0LWuUuOvIzwxhYyIhCZjv8hhLBSozIQ-TcLuxFDLTG4U4KPjj3NKV807XrZIwi-nBE7LPtBC-IcprnZrHxSCc4D0_0Rh9Zug0rPwItRy6OYuJQRWwWJSm2_PwwwrxibCYMUIt3XkHlQ"/>
-        </button>
+        <a href="https://github.com/8ernity/PricePredict-Pro" target="_blank" class="github-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0.296997C5.37 0.296997 0 5.67 0 12.297C0 17.6 3.438 22.097 8.205 23.682C8.805 23.795 9.025 23.424 9.025 23.105C9.025 22.82 9.015 22.065 9.01 21.065C5.672 21.789 4.968 19.455 4.968 19.455C4.422 18.07 3.633 17.7 3.633 17.7C2.546 16.956 3.717 16.971 3.717 16.971C4.922 17.055 5.555 18.207 5.555 18.207C6.625 20.042 8.364 19.512 9.05 19.205C9.158 18.429 9.467 17.9 9.81 17.6C7.145 17.3 4.344 16.268 4.344 11.67C4.344 10.36 4.809 9.29 5.579 8.45C5.444 8.147 5.039 6.927 5.684 5.274C5.684 5.274 6.689 4.952 8.984 6.504C9.944 6.237 10.964 6.105 11.984 6.099C13.004 6.105 14.024 6.237 14.984 6.504C17.264 4.952 18.269 5.274 18.269 5.274C18.914 6.927 18.509 8.147 18.389 8.45C19.154 9.29 19.619 10.36 19.619 11.67C19.619 16.28 16.814 17.295 14.144 17.59C14.564 17.95 14.954 18.686 14.954 19.81C14.954 21.416 14.939 22.706 14.939 23.096C14.939 23.411 15.149 23.786 15.764 23.666C20.565 22.092 24 17.592 24 12.297C24 5.67 18.627 0.296997 12 0.296997Z" fill="white"></path>
+            </svg>
+            <p class="text">View Repo</p>
+        </a>
     </div>
 </header>
 <!-- Main Layout -->
@@ -235,7 +297,7 @@
                     <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Parking (Sqft)</label>
                     <span id="parking-display" class="text-primary font-bold">150</span>
                 </div>
-                <input id="parking-slider" oninput="document.getElementById('parking-display').innerText = this.value; calculatePrice();" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="1000" min="0" type="range" value="150"/>
+                <input id="parking-slider" oninput="document.getElementById('parking-display').innerText = this.value" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="250" min="0" type="range" value="150"/>
             </div>
         </div>
 
@@ -399,27 +461,74 @@
                                 <span class="text-primary font-normal text-5xl align-top mr-2">₹</span>-- Lakhs
                             </h3>
                             <div class="inline-flex items-center justify-center gap-2 bg-surface-container-highest/50 px-4 py-1.5 rounded-full mx-auto border border-white/5">
-                                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                <span class="w-2 h-2 rounded-full bg-[#00d26a] animate-pulse"></span>
                                 <span class="text-sm text-on-surface-variant">Live Inference • Multiple Linear Regression Engine</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Market Dynamics -->
-                <div class="flex flex-col gap-6">
-                    <div class="bg-[#1E1E1E] rounded-xl border border-white/5 p-6 relative overflow-hidden h-full flex flex-col">
-                        <h3 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary">insights</span> Market Dynamics
-                        </h3>
-                        <div class="space-y-6 flex-1">
-                            <div>
-                                <div class="flex justify-between items-end mb-2">
-                                    <span class="text-on-surface-variant text-sm">Model R² Score</span>
-                                    <span class="text-primary font-bold">0.89</span>
+                <!-- Market Dynamics Flip Card -->
+                <div class="flex flex-col gap-6 flip-card min-h-[220px]">
+                    <div class="flip-card-inner">
+                        <!-- Front (Market Dynamics) -->
+                        <div class="flip-card-front bg-[#1E1E1E] rounded-xl border border-white/5 p-6 flex flex-col justify-start text-left">
+                            <h3 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">insights</span> Market Dynamics
+                            </h3>
+                            <div class="space-y-6 flex-1">
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-on-surface-variant text-sm">Estimated Price / Sq.Ft.</span>
+                                        <span id="price-per-sqft" class="text-primary font-bold text-lg">--</span>
+                                    </div>
                                 </div>
-                                <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                                    <div class="h-full bg-primary-fixed w-[89%] rounded-full"></div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-on-surface-variant text-sm">Market Trend (YoY)</span>
+                                        <span class="text-[#00d26a] font-bold flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">trending_up</span> +5.4%
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-on-surface-variant text-sm">Model R² Score</span>
+                                        <span class="text-primary font-bold">0.93</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                        <div class="h-full bg-primary-fixed w-[93%] rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Back (Live Usage Analytics) -->
+                        <div class="flip-card-back bg-[#1E1E1E] rounded-xl border border-white/5 p-6 flex flex-col justify-start text-left">
+                            <h3 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">query_stats</span> Live Usage Analytics
+                            </h3>
+                            <div class="space-y-6 flex-1">
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-on-surface-variant text-sm">Predictions Made Today</span>
+                                        <span id="analytics-predictions" class="text-primary font-bold text-lg">0</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                        <div class="h-full bg-primary-fixed w-[100%] rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-on-surface-variant text-sm">Avg. Metro Price Searched</span>
+                                        <span id="analytics-avg-price" class="text-[#00d26a] font-bold">--</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-on-surface-variant text-sm">Most Popular Area</span>
+                                        <span id="analytics-popular-area" class="text-primary font-bold">--</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -125,14 +125,43 @@ async function calculatePrice() {
         
         // Update UI
         document.getElementById('price-output').innerHTML = `<span class="text-[#00d26a] font-normal text-5xl align-top mr-2">₹</span><span class="text-[#00d26a]">${priceStr}</span>`;
+        
+        // Calculate and update Price per Sq.Ft
+        const pricePerSqft = Math.round((lakhs * 100000) / area);
+        const sqftElement = document.getElementById('price-per-sqft');
+        if (sqftElement) {
+            sqftElement.innerText = '₹' + pricePerSqft.toLocaleString() + ' / sq.ft';
+        }
+        
+        // Fetch and update analytics
+        await fetchAnalytics();
     } catch (error) {
         console.error("Failed to fetch price:", error);
         document.getElementById('price-output').innerHTML = `<span class="text-error font-normal text-3xl align-top mr-2">Error connecting to backend</span>`;
     }
 }
 
-// Run initial calculation
+async function fetchAnalytics() {
+    try {
+        const response = await fetch('/analytics');
+        if (!response.ok) return;
+        const data = await response.json();
+        
+        const predEl = document.getElementById('analytics-predictions');
+        const avgEl = document.getElementById('analytics-avg-price');
+        const popEl = document.getElementById('analytics-popular-area');
+        
+        if (predEl) predEl.innerText = data.predictions_today;
+        if (avgEl) avgEl.innerText = data.avg_price;
+        if (popEl) popEl.innerText = data.popular_area;
+    } catch (e) {
+        console.error("Failed to fetch analytics:", e);
+    }
+}
+
+// Run initial calculation and analytics
 calculatePrice();
+fetchAnalytics();
 
 // --- MAP LOGIC ---
 let map;
@@ -162,7 +191,7 @@ function initMap() {
         attribution: 'Tiles &copy; Esri'
     });
 
-    darkLayer.addTo(map);
+    setMapLayer('satellite');
 }
 
 function setMapLayer(layerType) {
