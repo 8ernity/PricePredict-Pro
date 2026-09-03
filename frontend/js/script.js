@@ -82,7 +82,8 @@ async function calculatePrice() {
     document.getElementById('price-output').innerHTML = `<span class="text-on-surface-variant font-normal text-4xl align-top mr-2">Computing...</span>`;
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/predict', {
+        // Since the FastAPI backend now serves the frontend, we can just use a relative URL!
+        const response = await fetch('/predict', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

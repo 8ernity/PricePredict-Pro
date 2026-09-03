@@ -5,7 +5,7 @@ A modern, highly-interactive web application that leverages machine learning to 
 ## ✨ Features
 
 - **Interactive Map:** Click on any tier-1 or tier-2 Indian city in the sidebar, and watch the map dynamically fly to that location using Leaflet.js.
-- **Machine Learning Integration:** Uses a Random Forest Regressor model built with Scikit-learn to estimate property values based on location, area, and configuration (BHK).
+- **Machine Learning Integration:** Uses a Multiple Linear Regression (MLR) model built with Scikit-learn to estimate property values based on location, area, and configuration (BHK).
 - **Modern UI:** Features a high-quality Glassmorphism dark theme, interactive shiny CTA buttons, and a responsive layout using Tailwind CSS.
 - **FastAPI Backend:** A blazing-fast backend API providing endpoints for model inference and dynamic data fetching.
 
@@ -23,7 +23,7 @@ PricePredict-Pro/
 ├── backend/
 │   ├── main.py                # FastAPI application & API endpoints
 │   ├── metadata.json          # Model metadata (categories, cities, etc.)
-│   ├── model.pkl              # Serialized Random Forest model
+│   ├── model.pkl              # Serialized MLR model
 │   ├── predictions.db         # SQLite database for storing predictions
 │   └── requirements.txt       # Python dependencies
 ├── frontend/

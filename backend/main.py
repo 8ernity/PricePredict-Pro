@@ -3,6 +3,7 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
@@ -120,3 +121,9 @@ async def predict_price(data: PropertyData, db: Session = Depends(get_db)):
 @app.get("/logs")
 def get_logs(db: Session = Depends(get_db), limit: int = 10):
     return db.query(PredictionLog).order_by(PredictionLog.timestamp.desc()).limit(limit).all()
+
+# ==========================================
+# Serve Frontend Static Files
+# ==========================================
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")

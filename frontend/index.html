@@ -164,7 +164,7 @@
 <!-- TopAppBar -->
 <header class="bg-surface/80 backdrop-blur-md text-primary font-headline-md text-headline-md fixed top-0 right-0 w-full z-30 px-6 h-16 flex items-center justify-between border-b border-outline-variant/30 shadow-sm">
     <div class="flex items-center gap-4">
-        <span class="font-extrabold text-on-surface">Valuation Dashboard</span>
+        <span class="font-extrabold text-on-surface">PricePredict Pro</span>
     </div>
     <div class="flex items-center gap-4">
         <div class="relative hidden lg:block">
@@ -231,12 +231,11 @@
                 </div>
             </div>
             <div class="flex flex-col gap-2 col-span-2">
-                <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Parking (Sqft)</label>
-                <div class="flex items-center bg-surface-container-highest rounded-lg border border-outline-variant/50 p-1">
-                    <button onclick="updateStepper('parking', -10)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">-</button>
-                    <span id="parking-display" class="flex-1 text-center font-bold text-on-surface">150</span>
-                    <button onclick="updateStepper('parking', 10)" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded">+</button>
+                <div class="flex justify-between items-end">
+                    <label class="text-[12px] text-on-surface-variant uppercase tracking-wider">Parking (Sqft)</label>
+                    <span id="parking-display" class="text-primary font-bold">150</span>
                 </div>
+                <input id="parking-slider" oninput="document.getElementById('parking-display').innerText = this.value; calculatePrice();" class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" max="1000" min="0" type="range" value="150"/>
             </div>
         </div>
 
